@@ -1,0 +1,51 @@
+{
+  "name": "osrm-express",
+  "version": "0.0.1",
+  "description": "Lightweight express server for serving osrm instances.",
+  "main": "./dist/server.js",
+  "scripts": {
+    "build": "babel src --presets @babel/preset-env --plugins @babel/plugin-transform-runtime --out-dir dist",
+    "coverage": "nyc npm run test",
+    "start": "NODE_ENV=development nodemon --exec babel-node src/server.js",
+    "test": "NODE_ENV=test mocha --require @babel/register --exit"
+  },
+  "author": "Stephan Georg <s.georg@hey.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-stage-2": "^7.8.3",
+    "@babel/register": "^7.12.1",
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.2.0",
+    "eslint": "^7.12.1",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "mocha": "^8.2.0",
+    "nodemon": "^2.0.6",
+    "nyc": "^15.0.1",
+    "supertest": "^6.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "body-parser": "^1.19.0",
+    "celebrate": "^12.2.0",
+    "config": "^3.3.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fast-safe-stringify": "^2.0.7",
+    "hot-shots": "^8.2.0",
+    "http-status": "^1.4.2",
+    "joi": "^17.3.0",
+    "lodash.find": "^4.6.0",
+    "lodash.findindex": "^4.6.0",
+    "morgan": "^1.10.0",
+    "osrm": "^5.23.0",
+    "pretty-error": "^2.1.2",
+    "winston": "^3.3.3",
+    "winston-console-format": "^1.0.8"
+  }
+}
