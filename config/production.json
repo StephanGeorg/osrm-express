@@ -1,7 +1,4 @@
 {
-  "api": {
-    "prefix": "/api"
-  },
   "osrm": {
     "data": [
       {
@@ -9,16 +6,20 @@
         "shared_memory": true,
         "dataset_name": "east_car",
         "longitude": {
-          "gte": 8
-        }
+          "value": 8,
+          "compare": "gte"
+        },
+        "profile": "driving"
       },
       {
         "algorithm": "MLD",
         "shared_memory": true,
         "dataset_name": "west_car",
         "longitude": {
-          "lt": 8
-        }
+          "value": 8,
+          "compare": "lt"
+        },
+        "profile": "driving"
       }
     ]
   },
