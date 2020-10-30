@@ -24,7 +24,7 @@ app.use(cors()); // Enable CORS headers
 app.use(bodyParser.json());
 
 // Routes
-app.use(`${config.get('api.prefix')}/server`, routes);
+app.use(`${config.get('api.prefix')}/`, routes);
 
 // Error handler
 app.use(error);

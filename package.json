@@ -43,7 +43,7 @@
     "lodash.find": "^4.6.0",
     "lodash.findindex": "^4.6.0",
     "morgan": "^1.10.0",
-    "osrm": "^5.23.0",
+    "osrm": "5.23.0",
     "pretty-error": "^2.1.2",
     "winston": "^3.3.3",
     "winston-console-format": "^1.0.8"

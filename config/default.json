@@ -1,24 +1,26 @@
 {
   "api": {
-    "prefix": "/api"
+    "prefix": ""
   },
   "osrm": {
     "data": [
       {
         "algorithm": "MLD",
-        "shared_memory": true,
-        "dataset_name": "east_car",
+        "path": "/Users/stephan/Downloads/data/berlin/berlin.osrm",
         "longitude": {
-          "gte": 8
-        }
+          "value": 8,
+          "compare": "gte"
+        },
+        "profile": "driving"
       },
       {
         "algorithm": "MLD",
-        "shared_memory": true,
-        "dataset_name": "west_car",
+        "path": "/Users/stephan/Downloads/data/nyc/nyc.osrm",
         "longitude": {
-          "lt": 8
-        }
+          "value": 8,
+          "compare": "lt"
+        },
+        "profile": "driving"
       }
     ]
   },

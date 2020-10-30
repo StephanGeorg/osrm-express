@@ -1,0 +1,30 @@
+{
+  "api": {
+    "prefix": "/api"
+  },
+  "osrm": {
+    "data": [
+      {
+        "algorithm": "MLD",
+        "shared_memory": true,
+        "dataset_name": "east_car",
+        "longitude": {
+          "gte": 8
+        }
+      },
+      {
+        "algorithm": "MLD",
+        "shared_memory": true,
+        "dataset_name": "west_car",
+        "longitude": {
+          "lt": 8
+        }
+      }
+    ]
+  },
+  "logs": {
+    "dogstatsd": {
+      "port": ""
+    }
+  }
+}

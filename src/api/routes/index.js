@@ -15,7 +15,6 @@ router.get(
   // celebrate(osrmController.validate.reqOSRM),
   async (req, res, next) => {
     await osrmController.reqOSRM(req, res, next);
-    res.json({ test: true });
   },
 );
 

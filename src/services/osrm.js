@@ -3,22 +3,59 @@ import OSRM from 'osrm';
 
 const osrmInstances = [];
 
+const validateLongitudeRule = (longitude, rule = {}) => {
+  const { value, compare } = rule;
+  switch (compare) {
+    case 'gt': return longitude > value;
+    case 'gte': return longitude >= value;
+    case 'lt': return longitude < value;
+    case 'lte': return longitude <= value;
+    default: return false;
+  }
+};
+
 export default {
   init() {
     const data = config.get('osrm.data');
     data.forEach((dataSet) => {
-      osrmInstances.push(
-        new OSRM(dataSet),
-      );
+      osrmInstances.push({
+        ...dataSet,
+        instance: new OSRM(dataSet),
+      });
     });
   },
 
-  req(path, params) {
+  getInstances() {
+    return osrmInstances;
+  },
+
+  /**
+   * Get data-set based on service, profile and conditions
+   * @param {*} options
+   */
+  getDataSet(options = {}) {
+    const { profile, coordinates } = options;
+    const longitude = coordinates[0][0];
+    const instances = this.getInstances();
+    const profileSets = instances.filter(instance => instance.profile === profile);
+    for (let i = 0; i < profileSets.length; i++) {
+      const instance = profileSets[i];
+      if (Number.isFinite(longitude) && instance.longitude) {
+        if (validateLongitudeRule(longitude, instance.longitude)) return instance;
+      } else return instance;
+    }
+    return null;
+  },
+
+  /**
+   * 
+   * @param {*} options
+   */
+  req(options = {}) {
     return new Promise((resolve, reject) => {
-      const osrm = osrmInstances[0];
-      console.log({ osrmInstances });
-      const params = { coordinates: [[13.438640, 52.519930], [13.415852, 52.513191]] };
-      osrm.route(params, (err, result) => {
+      const dataSet = this.getDataSet(options);
+      const params = { ...options };
+      dataSet.instance.route(params, (err, result) => {
         if (err) {
           reject(err);
           return;
