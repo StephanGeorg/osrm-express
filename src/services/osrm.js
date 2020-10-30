@@ -1,5 +1,8 @@
 import config from 'config';
 import OSRM from 'osrm';
+import HTTPStatus from 'http-status';
+
+import ExtError from '../utils/error/error';
 
 const osrmInstances = [];
 
@@ -54,6 +57,7 @@ export default {
   req(options = {}) {
     return new Promise((resolve, reject) => {
       const dataSet = this.getDataSet(options);
+      if (!dataSet) throw new ExtError(`Profile ${options.profile} not available`, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
       const params = { ...options };
       dataSet.instance.route(params, (err, result) => {
         if (err) {
