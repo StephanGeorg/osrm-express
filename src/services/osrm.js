@@ -18,6 +18,9 @@ const validateLongitudeRule = (longitude, rule = {}) => {
 };
 
 export default {
+  /**
+   * Initialize the OSRM instances
+   */
   init() {
     const data = config.get('osrm.data');
     data.forEach((dataSet) => {
@@ -28,6 +31,9 @@ export default {
     });
   },
 
+  /**
+   * Getter for OSRM instances array
+   */
   getInstances() {
     return osrmInstances;
   },
@@ -40,7 +46,7 @@ export default {
     const { profile, coordinates } = options;
     const longitude = coordinates[0][0];
     const instances = this.getInstances();
-    const profileSets = instances.filter(instance => instance.profile === profile);
+    const profileSets = instances.filter((instance) => instance.profile === profile);
     for (let i = 0; i < profileSets.length; i++) {
       const instance = profileSets[i];
       if (Number.isFinite(longitude) && instance.longitude) {
@@ -51,15 +57,16 @@ export default {
   },
 
   /**
-   * 
+   * Perform the OSRM call based on the data-source
    * @param {*} options
    */
   req(options = {}) {
     return new Promise((resolve, reject) => {
+      const { profile, service } = options;
       const dataSet = this.getDataSet(options);
-      if (!dataSet) throw new ExtError(`Profile ${options.profile} not available`, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+      if (!dataSet) throw new ExtError(`Profile ${profile} not available`, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
       const params = { ...options };
-      dataSet.instance.route(params, (err, result) => {
+      dataSet.instance[service](params, (err, result) => {
         if (err) {
           reject(err);
           return;

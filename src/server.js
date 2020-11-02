@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import boolParser from 'express-query-boolean';
 import morgan from 'morgan';
 import config from 'config';
 
@@ -22,6 +23,7 @@ app.use(morgan('combined', { stream: logger.stream }));
 app.use(authenticate); // Authenticate request
 app.use(cors()); // Enable CORS headers
 app.use(bodyParser.json());
+app.use(boolParser());
 
 // Routes
 app.use(`${config.get('api.prefix')}/`, routes);

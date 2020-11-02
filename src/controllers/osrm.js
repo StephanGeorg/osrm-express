@@ -5,12 +5,32 @@ import osrmService from '../services/osrm';
 
 import ExtError, { extendError } from '../utils/error/error';
 
-const parseCoordinates = (query = '') => query
+/**
+ * Parse query params based on service
+ * @param {*} query
+ */
+const queryParser = (query = {}) => {
+  const { annotations = '' } = query;
+  return {
+    ...query,
+    annotations: annotations.split(','),
+  };
+};
+
+/**
+ * Parse coordinates parameter
+ * @param {*} query
+ */
+const coordinatesParser = (query = '') => query
   .toString()
   .split(';')
   .map((coordinates) => coordinates.split(',')
     .map((coordinate) => Number(coordinate)));
 
+/**
+ * Parse URL params
+ * @param {*} path
+ */
 const urlParser = (path) => {
   const pathRegex = /^\/([a-z0-9]*)\/([a-z0-9]*)\/([a-z0-9]*)\/(.*)/gi;
   const params = pathRegex.exec(path);
@@ -21,7 +41,7 @@ const urlParser = (path) => {
     service: params[1],
     version: params[2],
     profile: params[3],
-    coordinates: parseCoordinates(params[4]),
+    coordinates: coordinatesParser(params[4]),
   };
 };
 
@@ -33,16 +53,20 @@ export default {
   },
 
   /**
-   *  Get a particular user
+   * Perform the OSRM call
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
    */
   async reqOSRM(req, res, next) {
     const { query } = req;
+    const finalQuery = queryParser(query);
     const reqPath = req.path;
     let options = {};
     try {
       const params = urlParser(reqPath);
       options = {
-        ...query,
+        ...finalQuery,
         ...params,
       };
       const result = await osrmService.req(options);
