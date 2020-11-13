@@ -39,6 +39,14 @@ export default {
   },
 
   /**
+   * Getter for profile types
+   */
+  getProfiles() {
+    const instances = this.getInstances();
+    return instances.map((instance) => instance.profile);
+  },
+
+  /**
    * Get data-set based on service, profile and conditions
    * @param {*} options
    */

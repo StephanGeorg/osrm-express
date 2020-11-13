@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(boolParser());
 
 // Routes
-app.use(`${config.get('api.prefix')}/`, routes);
+app.use(`${config.get('api.prefix')}/:service/:version/:profile/:coordinates`, routes);
 
 // Error handler
 app.use(error);

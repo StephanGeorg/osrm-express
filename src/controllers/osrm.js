@@ -10,10 +10,10 @@ import ExtError, { extendError } from '../utils/error/error';
  * @param {*} query
  */
 const queryParser = (query = {}) => {
-  const { annotations = '' } = query;
+  const finalQuery = { ...query };
+  if (query.annotations) finalQuery.annotations = query.annotations.split(',');
   return {
-    ...query,
-    annotations: annotations.split(','),
+    ...finalQuery,
   };
 };
 
@@ -27,28 +27,15 @@ const coordinatesParser = (query = '') => query
   .map((coordinates) => coordinates.split(',')
     .map((coordinate) => Number(coordinate)));
 
-/**
- * Parse URL params
- * @param {*} path
- */
-const urlParser = (path) => {
-  const pathRegex = /^\/([a-z0-9]*)\/([a-z0-9]*)\/([a-z0-9]*)\/(.*)/gi;
-  const params = pathRegex.exec(path);
-  if (!params || params.length !== 5) {
-    throw new ExtError('Bad request!', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
-  }
-  return {
-    service: params[1],
-    version: params[2],
-    profile: params[3],
-    coordinates: coordinatesParser(params[4]),
-  };
-};
-
 export default {
   validate: {
     reqOSRM: {
-      params: { },
+      params: Joi.object().keys({
+        service: Joi.string().valid('nearest', 'route', 'table', 'match', 'trip', 'tile').required(),
+        version: Joi.string().valid('v1').required(),
+        profile: Joi.string().valid(...osrmService.getProfiles()).required(),
+        coordinates: Joi.string().custom(coordinatesParser).required(),
+      }),
     },
   },
 
@@ -59,12 +46,11 @@ export default {
    * @param {*} next
    */
   async reqOSRM(req, res, next) {
-    const { query } = req;
+    const { query, params } = req;
     const finalQuery = queryParser(query);
     const reqPath = req.path;
     let options = {};
     try {
-      const params = urlParser(reqPath);
       options = {
         ...finalQuery,
         ...params,

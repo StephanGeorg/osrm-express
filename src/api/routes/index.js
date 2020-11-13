@@ -11,9 +11,11 @@ const router = express.Router({
  *  Get user by id
  */
 router.get(
-  '/*',
-  // celebrate(osrmController.validate.reqOSRM),
+  '/',
+  celebrate(osrmController.validate.reqOSRM),
   async (req, res, next) => {
+    const { params } = req;
+    console.log({ params });
     await osrmController.reqOSRM(req, res, next);
   },
 );
