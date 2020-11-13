@@ -4,6 +4,7 @@ import HTTPStatus from 'http-status';
 import osrmService from '../services/osrm';
 
 import ExtError, { extendError } from '../utils/error/error';
+import { isLat, isLng } from '../utils/helper/num';
 
 /**
  * Parse query params based on service
@@ -15,6 +16,33 @@ const queryParser = (query = {}) => {
   return {
     ...finalQuery,
   };
+};
+
+/**
+ * Validate coordinates based on service
+ * @param {Array} coordinates
+ * @param {String} service
+ */
+const validateCoordinates = (coordinates = [], service = '') => {
+  console.log({ coordinates });
+  if (!Array.isArray(coordinates) || coordinates.length < 1) {
+    throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+  }
+  // Check if all coordinate pairs are valid
+  coordinates.forEach((coordinate) => {
+    if (coordinate.length < 2) {
+      throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+    }
+    if (!isLat(coordinate[0]) || !isLng(coordinate[1])) {
+      throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+    }
+  });
+  // Check coordinate length
+  if (service === 'nearest') {
+    if (coordinates.length !== 1) {
+      throw new ExtError('Exactly one coordinate pair must be provided', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+    }
+  }
 };
 
 /**
@@ -47,10 +75,12 @@ export default {
    */
   async reqOSRM(req, res, next) {
     const { query, params } = req;
+    const { coordinates, service } = params;
     const finalQuery = queryParser(query);
     const reqPath = req.path;
     let options = {};
     try {
+      validateCoordinates(coordinates, service);
       options = {
         ...finalQuery,
         ...params,
