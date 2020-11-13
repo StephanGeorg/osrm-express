@@ -24,6 +24,7 @@ export default {
   init() {
     const data = config.get('osrm.data');
     console.log({ data });
+    console.log(process.env);
     data.forEach((dataSet) => {
       osrmInstances.push({
         ...dataSet,
