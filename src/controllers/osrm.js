@@ -24,23 +24,34 @@ const queryParser = (query = {}) => {
  * @param {String} service
  */
 const validateCoordinates = (coordinates = [], service = '') => {
-  console.log({ coordinates });
   if (!Array.isArray(coordinates) || coordinates.length < 1) {
-    throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+    throw new ExtError(
+      'Coordinates must be an array of (lon/lat) pairs',
+      { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+    );
   }
   // Check if all coordinate pairs are valid
   coordinates.forEach((coordinate) => {
     if (coordinate.length < 2) {
-      throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+      throw new ExtError(
+        'Coordinates must be an array of (lon/lat) pairs',
+        { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+      );
     }
-    if (!isLat(coordinate[0]) || !isLng(coordinate[1])) {
-      throw new ExtError('Coordinates must be an array of (lon/lat) pairs', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+    if (!isLng(coordinate[0] || !isLat(coordinate[1]))) {
+      throw new ExtError(
+        'Coordinates must be an array of (lon/lat) pairs',
+        { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+      );
     }
   });
-  // Check coordinate length
+  // Check coordinates length
   if (service === 'nearest') {
     if (coordinates.length !== 1) {
-      throw new ExtError('Exactly one coordinate pair must be provided', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+      throw new ExtError(
+        'Exactly one coordinate pair must be provided',
+        { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+      );
     }
   }
 };

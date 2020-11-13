@@ -14,8 +14,6 @@ router.get(
   '/',
   celebrate(osrmController.validate.reqOSRM),
   async (req, res, next) => {
-    const { params } = req;
-    console.log({ params });
     await osrmController.reqOSRM(req, res, next);
   },
 );
