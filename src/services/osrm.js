@@ -17,14 +17,20 @@ const validateLongitudeRule = (longitude, rule = {}) => {
   }
 };
 
+const getStatus = (result, error) => {
+  if (result) return 'Ok';
+  switch (error) {
+    case 'test': return 'test';
+    default: return 'error';
+  }
+};
+
 export default {
   /**
    * Initialize the OSRM instances
    */
   init() {
     const data = config.get('osrm.data');
-    console.log({ data });
-    console.log(process.env);
     data.forEach((dataSet) => {
       osrmInstances.push({
         ...dataSet,
@@ -76,13 +82,23 @@ export default {
       const dataSet = this.getDataSet(options);
       if (!dataSet) throw new ExtError(`Profile ${profile} not available`, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
       const params = { ...options };
-      dataSet.instance[service](params, (err, result) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(result);
-      });
+      try {
+        dataSet.instance[service](params, (err, result) => {
+          const code = getStatus(result, err);
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve({
+            code,
+            ...result,
+          });
+        });
+      } catch (err) {
+        // TODO: Catch known errors from OSRM https://github.com/Project-OSRM/osrm-backend/tree/master/src/server
+        console.log({ err });
+        reject(err);
+      }
     });
   },
 };

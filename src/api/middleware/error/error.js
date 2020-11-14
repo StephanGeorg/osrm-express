@@ -31,6 +31,7 @@ export default (err, req, res, next) => { // eslint-disable-line
 
   const statusCode = err.status || err.statusCode || HTTPStatus.INTERNAL_SERVER_ERROR;
   const errorMessage = err.message || err.msg;
+  const errorCode = err.code || errorMessage;
   const errorText = `${errorMessage} (${statusCode}): ${req.method} ${req.originalUrl} ${req.ip}`;
   const errorContext = err.context || {};
   const errorTask = err.task || 'Unknown task';
@@ -45,5 +46,10 @@ export default (err, req, res, next) => { // eslint-disable-line
 
   // Render the error
   res.status(statusCode);
-  return res.json({ statusCode, error: HTTPStatus[statusCode], message: err.message });
+  return res.json({
+    statusCode,
+    error: HTTPStatus[statusCode],
+    message: err.message,
+    errorCode,
+  });
 };
