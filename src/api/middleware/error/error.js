@@ -50,6 +50,6 @@ export default (err, req, res, next) => { // eslint-disable-line
     statusCode,
     error: HTTPStatus[statusCode],
     message: err.message,
-    errorCode,
+    code: errorCode,
   });
 };

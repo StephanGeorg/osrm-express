@@ -86,6 +86,7 @@ export default {
         dataSet.instance[service](params, (err, result) => {
           const code = getStatus(result, err);
           if (err) {
+            console.log({ err });
             reject(err);
             return;
           }
