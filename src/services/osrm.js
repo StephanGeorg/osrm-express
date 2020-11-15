@@ -72,36 +72,60 @@ export default {
     return null;
   },
 
+  reqTile(dataSet, xyz) {
+    return new Promise((resolve, reject) => {
+      dataSet.instance.tile(xyz, (err, result) => {
+        const code = getStatus(result, err);
+        if (err) {
+          // errors are 400 errors
+          reject(new ExtError(
+            err.message,
+            { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+          ));
+          return;
+        }
+        resolve({
+          code,
+          ...result,
+        });
+      });
+    });
+  },
+
+  reqDefault(dataSet, service = '', params = {}) {
+    return new Promise((resolve, reject) => {
+      dataSet.instance[service](params, (err, result) => {
+        const code = getStatus(result, err);
+        if (err) {
+          // errors are 400 errors
+          reject(new ExtError(
+            err.message,
+            { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+          ));
+          return;
+        }
+        resolve({
+          code,
+          ...result,
+        });
+      });
+    });
+  },
+
   /**
    * Perform the OSRM call based on the data-source
    * @param {*} options
    */
-  req(options = {}) {
-    return new Promise((resolve, reject) => {
-      const { profile, service } = options;
-      const dataSet = this.getDataSet(options);
-      if (!dataSet) throw new ExtError(`Profile ${profile} not available`, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
-      const params = { ...options };
-      try {
-        dataSet.instance[service](params, (err, result) => {
-          const code = getStatus(result, err);
-          if (err) {
-            // errors are 400 errors
-            reject(new ExtError(
-              err.message,
-              { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
-            ));
-            return;
-          }
-          resolve({
-            code,
-            ...result,
-          });
-        });
-      } catch (err) {
-        // Something went wrong -> 500 error
-        reject(err);
-      }
-    });
+  async req(params = {}) {
+    const { profile, service } = params;
+    const dataSet = this.getDataSet(params);
+    if (!dataSet) {
+      throw new ExtError(
+        `Profile ${profile} not available`,
+        { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+      );
+    }
+    if (service === 'tile') return this.reqTile(dataSet, params.coordinates);
+    return this.reqDefault(dataSet, service, params);
   },
 };

@@ -18,12 +18,18 @@ const queryParser = (query = {}) => {
   };
 };
 
+const validateTile = (input = []) => {
+  console.log({ input });
+  return [1310, 3166, 13];
+};
+
 /**
  * Validate coordinates based on service
  * @param {Array} coordinates
  * @param {String} service
  */
 const validateCoordinates = (coordinates = [], service = '') => {
+  if (service === 'tile') return validateTile(coordinates);
   if (!Array.isArray(coordinates) || coordinates.length < 1) {
     throw new ExtError(
       'Coordinates must be an array of (lon/lat) pairs',
@@ -54,6 +60,7 @@ const validateCoordinates = (coordinates = [], service = '') => {
       );
     }
   }
+  return coordinates;
 };
 
 /**
@@ -75,13 +82,6 @@ export default {
     },
   },
 
-  validateParams(req, res, next) {
-    const { params } = req;
-    const { service, version, profile } = params;
-
-    next();
-  },
-
   /**
    * Perform the OSRM call
    * @param {*} req
@@ -95,14 +95,14 @@ export default {
     const reqPath = req.path;
     let options = {};
     try {
-      validateCoordinates(coordinates, service);
+      const validCoordinates = validateCoordinates(coordinates, service);
       options = {
         ...finalQuery,
         ...params,
+        coordinates: validCoordinates,
       };
       const result = await osrmService.req(options);
       if (result) res.json(result);
-      else throw new ExtError('User not found!', { statusCode: HTTPStatus.NOT_FOUND, logType: 'warn' });
     } catch (error) {
       next(extendError(error, { task: 'osrmController/req', context: { reqPath, query, options } }));
     }
