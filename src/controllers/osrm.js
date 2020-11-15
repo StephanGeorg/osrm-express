@@ -70,12 +70,16 @@ export default {
   validate: {
     reqOSRM: {
       params: Joi.object().keys({
-        service: Joi.string().valid('nearest', 'route', 'table', 'match', 'trip', 'tile').required(),
-        version: Joi.string().valid('v1').required(),
-        profile: Joi.string().valid(...osrmService.getProfiles()).required(),
         coordinates: Joi.string().custom(coordinatesParser).required(),
-      }),
+      }).unknown(true),
     },
+  },
+
+  validateParams(req, res, next) {
+    const { params } = req;
+    const { service, version, profile } = params;
+
+    next();
   },
 
   /**

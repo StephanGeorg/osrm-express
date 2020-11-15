@@ -7,6 +7,7 @@ import config from 'config';
 
 import { authenticate } from './api/middleware/auth/auth';
 import error from './api/middleware/error/error';
+import validateParams from './api/middleware/validation/params';
 import boot from './api/boot/boot';
 
 import { logger } from './utils/logs/logs';
@@ -26,7 +27,11 @@ app.use(bodyParser.json());
 app.use(boolParser());
 
 // Routes
-app.use(`${config.get('api.prefix')}/:service/:version/:profile/:coordinates`, routes);
+app.use(
+  `${config.get('api.prefix')}/:service/:version/:profile/:coordinates`,
+  validateParams,
+  routes,
+);
 
 // Error handler
 app.use(error);

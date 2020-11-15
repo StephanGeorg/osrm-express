@@ -86,9 +86,11 @@ export default {
         dataSet.instance[service](params, (err, result) => {
           const code = getStatus(result, err);
           if (err) {
-            // TODO: Catch known errors from OSRM https://github.com/Project-OSRM/osrm-backend/tree/master/src/server
-            const finalErr = new ExtError(err.message, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
-            reject(finalErr);
+            // errors are 400 errors
+            reject(new ExtError(
+              err.message,
+              { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+            ));
             return;
           }
           resolve({
@@ -97,6 +99,7 @@ export default {
           });
         });
       } catch (err) {
+        // Something went wrong -> 500 error
         reject(err);
       }
     });
