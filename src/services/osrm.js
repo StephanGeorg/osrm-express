@@ -87,8 +87,8 @@ export default {
           const code = getStatus(result, err);
           if (err) {
             // TODO: Catch known errors from OSRM https://github.com/Project-OSRM/osrm-backend/tree/master/src/server
-            console.log('from callback', { err });
-            reject(err);
+            const finalErr = new ExtError(err.message, { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
+            reject(finalErr);
             return;
           }
           resolve({
