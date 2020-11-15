@@ -86,7 +86,8 @@ export default {
         dataSet.instance[service](params, (err, result) => {
           const code = getStatus(result, err);
           if (err) {
-            console.log({ err });
+            // TODO: Catch known errors from OSRM https://github.com/Project-OSRM/osrm-backend/tree/master/src/server
+            console.log('from callback', { err });
             reject(err);
             return;
           }
@@ -96,8 +97,6 @@ export default {
           });
         });
       } catch (err) {
-        // TODO: Catch known errors from OSRM https://github.com/Project-OSRM/osrm-backend/tree/master/src/server
-        console.log({ err });
         reject(err);
       }
     });
