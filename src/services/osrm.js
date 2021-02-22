@@ -8,7 +8,6 @@ const osrmInstances = [];
 
 const validateLongitudeRule = (longitude, rule = {}) => {
   const { value, compare } = rule;
-  console.log({ longitude, value, compare });
   switch (compare) {
     case 'gt': return longitude > value;
     case 'gte': return longitude >= value;
