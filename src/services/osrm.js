@@ -8,6 +8,7 @@ const osrmInstances = [];
 
 const validateLongitudeRule = (longitude, rule = {}) => {
   const { value, compare } = rule;
+  console.log({ longitude, value, compare });
   switch (compare) {
     case 'gt': return longitude > value;
     case 'gte': return longitude >= value;
@@ -119,7 +120,6 @@ export default {
   async req(params = {}) {
     const { profile, service } = params;
     const dataSet = this.getDataSet(params);
-    console.log({ dataSet });
     if (!dataSet) {
       throw new ExtError(
         `Profile ${profile} not available`,
