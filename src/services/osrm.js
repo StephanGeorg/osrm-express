@@ -2,7 +2,7 @@ import config from 'config';
 import OSRM from 'osrm';
 import HTTPStatus from 'http-status';
 
-import ExtError from '../utils/error/error';
+import ExtError, { extendError } from '../utils/error/error';
 
 const osrmInstances = [];
 
@@ -19,8 +19,9 @@ const validateLongitudeRule = (longitude, rule = {}) => {
 
 const getStatus = (result, error) => {
   if (result) return 'Ok';
-  switch (error) {
+  switch (error.message) {
     case 'test': return 'test';
+    case 'Impossible route between points': return 'NoRoute';
     default: return 'error';
   }
 };
@@ -62,7 +63,7 @@ export default {
     const { profile, coordinates } = options;
     const longitude = coordinates[0][0];
     const instances = this.getInstances();
-    const profileSets = instances.filter((instance) => instance.profile === profile);
+    const profileSets = instances.filter((instance = {}) => instance.profile === profile);
     for (let i = 0; i < profileSets.length; i++) {
       const instance = profileSets[i];
       if (Number.isFinite(longitude) && instance.longitude) {
@@ -113,11 +114,45 @@ export default {
   },
 
   /**
+   * Check if route contains more than one dataset
+   * @param {object} options
+   */
+  validatePossibleRoute(options = {}) {
+    const { profile, coordinates } = options;
+    const instances = this.getInstances();
+    const profileSets = instances.filter((instance = {}) => instance.profile === profile);
+    const usedDatasets = [];
+    coordinates.forEach((coordinate) => {
+      const [longitude] = coordinate;
+      for (let i = 0; i < profileSets.length; i++) {
+        const instance = profileSets[i];
+        const { path, dataset_name } = instance; // eslint-disable-line camelcase
+        const name = dataset_name || path; // eslint-disable-line camelcase
+        if (Number.isFinite(longitude) && instance.longitude) {
+          if (validateLongitudeRule(longitude, instance.longitude)) usedDatasets.push(name);
+        }
+      }
+    });
+    const unique = [...new Set(usedDatasets)];
+    return unique.length === 1;
+  },
+
+  /**
    * Perform the OSRM call based on the data-source
    * @param {*} options
    */
   async req(params = {}) {
     const { profile, service } = params;
+
+    // Check if route is possible
+    if (!this.validatePossibleRoute(params)) {
+      const err = new ExtError(
+        'Impossible route between points',
+        { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' },
+      );
+      throw extendError(err, { code: getStatus(null, err) });
+    }
+
     const dataSet = this.getDataSet(params);
     if (!dataSet) {
       throw new ExtError(
