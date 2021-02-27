@@ -16,7 +16,7 @@
         "shared_memory": true,
         "dataset_name": "west_car",
         "longitude": {
-          "value": 8,
+          "value": -7,
           "compare": "lt"
         },
         "profile": "driving"
