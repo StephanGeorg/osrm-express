@@ -16,9 +16,6 @@ export default (req, res, next) => {
     throw new ExtError('InvalidVersion', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
   }
 
-  console.log({ profile });
-  console.log(osrmService.getProfiles().includes(profile));
-
   if (!osrmService.getProfiles().includes(profile)) {
     throw new ExtError('InvalidOptions', { statusCode: HTTPStatus.BAD_REQUEST, logType: 'warn' });
   }
