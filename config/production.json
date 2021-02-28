@@ -6,7 +6,7 @@
         "shared_memory": true,
         "dataset_name": "east_car",
         "longitude": {
-          "value": -7,
+          "value": -31,
           "compare": "gte"
         },
         "profile": "driving"
@@ -16,7 +16,7 @@
         "shared_memory": true,
         "dataset_name": "west_car",
         "longitude": {
-          "value": -7,
+          "value": -31,
           "compare": "lt"
         },
         "profile": "driving"
