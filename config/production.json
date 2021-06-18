@@ -4,6 +4,16 @@
       {
         "algorithm": "MLD",
         "shared_memory": true,
+        "dataset_name": "east_car",
+        "longitude": {
+          "value": -31,
+          "compare": "gte"
+        },
+        "profile": "driving"
+      },
+      {
+        "algorithm": "MLD",
+        "shared_memory": true,
         "dataset_name": "west_car",
         "longitude": {
           "value": -31,
