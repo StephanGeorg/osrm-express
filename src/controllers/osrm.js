@@ -13,6 +13,8 @@ import { isLat, isLng } from '../utils/helper/num';
 const queryParser = (query = {}) => {
   const finalQuery = { ...query };
   if (query.annotations) finalQuery.annotations = query.annotations.split(',');
+  if (query.sources) finalQuery.sources = query.sources.split(';');
+  if (query.destinations) finalQuery.destinations = query.destinations.split(';');
   return {
     ...finalQuery,
   };
@@ -99,6 +101,7 @@ export default {
       options = {
         ...finalQuery,
         ...params,
+        sources: query.sources.split(';'),
         coordinates: validCoordinates,
       };
       const result = await osrmService.req(options);

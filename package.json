@@ -1,6 +1,6 @@
 {
   "name": "osrm-express",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Lightweight express server for serving osrm instances.",
   "main": "./dist/server.js",
   "scripts": {
