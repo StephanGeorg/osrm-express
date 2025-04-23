@@ -101,7 +101,6 @@ export default {
       options = {
         ...finalQuery,
         ...params,
-        sources: query.sources.split(';'),
         coordinates: validCoordinates,
       };
       const result = await osrmService.req(options);
